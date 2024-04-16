@@ -2,7 +2,7 @@ import { useActiveViewport } from "@itwin/appui-react";
 import React, { useEffect } from "react";
 import RealityDataApi from "./RealityDataApi";
 import "./MyFirstWidget.css";
-import { ToggleSwitch } from "@itwin/itwinui-react";
+import { Button, ToggleSwitch } from "@itwin/itwinui-react";
 import { ContextRealityModelProps } from "@itwin/core-common";
 
 export const MyFirstWidget: React.FC = () => {
@@ -11,6 +11,7 @@ export const MyFirstWidget: React.FC = () => {
   const [initialized, setInitialized] = React.useState<boolean>(false);
   const [realityModels, setRealityModelList] = React.useState<ContextRealityModelProps[]>([]);
   const [classifier, setClassifier] = React.useState<string>("");
+  const [listOfThings, setListOfThings] = React.useState<string[]>([]);
 
   useEffect(() => {
     const asyncInitialize = async () => {
@@ -40,10 +41,30 @@ export const MyFirstWidget: React.FC = () => {
     }
   }
 
+  const addBanana = async () => {
+    setListOfThings([...listOfThings, "Banana!"])
+  }
+
+  const addApple = async () => {
+    setListOfThings([...listOfThings, "Apple!"])
+  }
+
+  const removeTop = async () => {
+    setListOfThings(listOfThings.splice(1))
+  }
+
+  const thingList = listOfThings.map((thing: string) => <li>{thing}</li>)
+
   return (
     <div>
       This is my first widget
       <ToggleSwitch onChange={togglePhillyReality} label='Philly Reality Data' />
+      <Button onClick={addBanana}>Add Banana</Button>
+      <Button onClick={addApple}>Add Apple</Button>
+      <Button onClick={removeTop}>Remove Top</Button>
+      <ul>
+        {thingList}
+      </ul>
     </div>
   );
 };
