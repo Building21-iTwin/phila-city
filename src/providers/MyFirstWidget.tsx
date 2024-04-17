@@ -2,8 +2,9 @@ import { useActiveViewport } from "@itwin/appui-react";
 import React, { useEffect } from "react";
 import RealityDataApi from "./RealityDataApi";
 import "./MyFirstWidget.css";
-import { Button, ToggleSwitch } from "@itwin/itwinui-react";
-import { ContextRealityModelProps } from "@itwin/core-common";
+import { Button, Flex, ToggleSwitch } from "@itwin/itwinui-react";
+import { ColorDef, ContextRealityModelProps } from "@itwin/core-common";
+import { ColorPickerButton } from "@itwin/imodel-components-react";
 
 export const MyFirstWidget: React.FC = () => {
   const viewport = useActiveViewport();
@@ -12,7 +13,8 @@ export const MyFirstWidget: React.FC = () => {
   const [realityModels, setRealityModelList] = React.useState<ContextRealityModelProps[]>([]);
   const [classifier, setClassifier] = React.useState<string>("");
   const [listOfThings, setListOfThings] = React.useState<string[]>([]);
-
+  const [hiliteColor, setHiliteColor] = React.useState<ColorDef>(ColorDef.green);
+  
   useEffect(() => {
     const asyncInitialize = async () => {
       if (viewport) {
@@ -22,6 +24,7 @@ export const MyFirstWidget: React.FC = () => {
         if(classifiers) {
           setClassifier(classifiers[0].value);
         }
+        setHiliteColor(viewport.hilite.color);
       }
     };
 
@@ -52,16 +55,30 @@ export const MyFirstWidget: React.FC = () => {
   const removeTop = async () => {
     setListOfThings(listOfThings.splice(1))
   }
+  const onColorChange = async (newColor: ColorDef) => {
+    if (viewport) {
+      viewport.hilite = {...viewport.hilite, color: newColor};
+    }
+    setHiliteColor(newColor);
+  }
 
   const thingList = listOfThings.map((thing: string) => <li>{thing}</li>)
 
   return (
     <div>
       This is my first widget
-      <ToggleSwitch onChange={togglePhillyReality} label='Philly Reality Data' />
-      <Button onClick={addBanana}>Add Banana</Button>
-      <Button onClick={addApple}>Add Apple</Button>
-      <Button onClick={removeTop}>Remove Top</Button>
+      <Flex flexDirection="column">
+        <ToggleSwitch onChange={togglePhillyReality} label='Philly Reality Data' />
+        <Flex>
+          <ColorPickerButton initialColor={hiliteColor} onColorPick={onColorChange}/>
+          Select hilite color
+        </Flex>
+        <Flex>
+          <Button onClick={addBanana}>Add Banana</Button>
+          <Button onClick={addApple}>Add Apple</Button>
+          <Button onClick={removeTop}>Remove Top</Button>
+        </Flex>
+      </Flex>
       <ul>
         {thingList}
       </ul>
