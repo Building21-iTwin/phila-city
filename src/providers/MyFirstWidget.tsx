@@ -24,7 +24,7 @@ export const MyFirstWidget: React.FC = () => {
         if(classifiers) {
           setClassifier(classifiers[0].value);
         }
-        setHiliteColor(viewport.hilite.color);
+        onColorChange(ColorDef.fromString("#08227f"));
       }
     };
 
