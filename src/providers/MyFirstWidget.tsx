@@ -5,6 +5,7 @@ import "./MyFirstWidget.css";
 import { Button, Flex, ToggleSwitch } from "@itwin/itwinui-react";
 import { ColorDef, ContextRealityModelProps } from "@itwin/core-common";
 import { ColorPickerButton } from "@itwin/imodel-components-react";
+import { BuildingGroup, BuildingGroupListItem } from "./BuildingGroupComponent";
 
 export const MyFirstWidget: React.FC = () => {
   const viewport = useActiveViewport();
@@ -12,9 +13,8 @@ export const MyFirstWidget: React.FC = () => {
   const [initialized, setInitialized] = React.useState<boolean>(false);
   const [realityModels, setRealityModelList] = React.useState<ContextRealityModelProps[]>([]);
   const [classifier, setClassifier] = React.useState<string>("");
-  const [listOfThings, setListOfThings] = React.useState<string[]>([]);
-  const [hiliteColor, setHiliteColor] = React.useState<ColorDef>(ColorDef.green);
-  
+  const [selectedBuildings, setSelectedBuildings] = React.useState<BuildingGroup[]>([]);
+
   useEffect(() => {
     const asyncInitialize = async () => {
       if (viewport) {
@@ -24,7 +24,6 @@ export const MyFirstWidget: React.FC = () => {
         if(classifiers) {
           setClassifier(classifiers[0].value);
         }
-        onColorChange(ColorDef.fromString("#08227f"));
       }
     };
 
@@ -44,44 +43,29 @@ export const MyFirstWidget: React.FC = () => {
     }
   }
 
-  const addBanana = async () => {
-    setListOfThings([...listOfThings, "Banana!"])
+  const addNewGroup = async () => {
+    const newSelectedBuildings = [...selectedBuildings, 
+      {name: "new " + selectedBuildings.length, color: ColorDef.fromString("#08227f"), buildings: []}]
+    setSelectedBuildings(newSelectedBuildings);
   }
 
-  const addApple = async () => {
-    setListOfThings([...listOfThings, "Apple!"])
+  const handleItemChange = (oldItem: BuildingGroup, newItem: BuildingGroup) => {
+    const newList = selectedBuildings.map((item) => item.name === oldItem.name ? newItem : item);
+    setSelectedBuildings(newList);
   }
-
-  const removeTop = async () => {
-    setListOfThings(listOfThings.splice(1))
-  }
-  const onColorChange = async (newColor: ColorDef) => {
-    if (viewport) {
-      viewport.hilite = {...viewport.hilite, color: newColor};
-    }
-    setHiliteColor(newColor);
-  }
-
-  const thingList = listOfThings.map((thing: string) => <li>{thing}</li>)
+  
+  const buildingGroupList = selectedBuildings.map (
+    (bg: BuildingGroup) => <BuildingGroupListItem item={bg} handleItemChange={handleItemChange}/>
+  )
 
   return (
     <div>
       This is my first widget
       <Flex flexDirection="column">
         <ToggleSwitch onChange={togglePhillyReality} label='Philly Reality Data' />
-        <Flex>
-          <ColorPickerButton initialColor={hiliteColor} onColorPick={onColorChange}/>
-          Select hilite color
-        </Flex>
-        <Flex>
-          <Button onClick={addBanana}>Add Banana</Button>
-          <Button onClick={addApple}>Add Apple</Button>
-          <Button onClick={removeTop}>Remove Top</Button>
-        </Flex>
+        <Button onClick={addNewGroup}>Add New Group</Button>
+        {buildingGroupList}
       </Flex>
-      <ul>
-        {thingList}
-      </ul>
     </div>
   );
 };
