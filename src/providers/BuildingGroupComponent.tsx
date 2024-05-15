@@ -53,14 +53,19 @@ export const BuildingGroupListItem: React.FC<GroupListItemProps> = ({
         handleItemChange(item, newItem);
       }
     
+    const zoom = async () => {
+        if (viewport)
+            viewport.zoomToElements(item.buildings)
+    }
 
     return (
         <div>
             <ColorPickerButton initialColor={item.color} onColorPick={onColorChange}/>
             <input type="text" value={item.name} onChange={onNameChange} />
-            <Button onClick={saveBuilding}>Save Selected Buildings</Button>
-            <Button onClick={selectSavedBuildings}>Select Saved Buildings</Button>
-            <Button onClick={clearSelectedBuildings}>Clear Buildings</Button>
+            <Button onClick={saveBuilding}>Save</Button>
+            <Button onClick={selectSavedBuildings}>Select Saved</Button>
+            <Button onClick={clearSelectedBuildings}>Clear</Button>
+            <Button onClick={zoom}>Zoom</Button>
         </div>
     )
 }
