@@ -4,7 +4,6 @@ import RealityDataApi from "./RealityDataApi";
 import "./MyFirstWidget.css";
 import { Button, Flex, ToggleSwitch } from "@itwin/itwinui-react";
 import { ColorDef, ContextRealityModelProps } from "@itwin/core-common";
-import { ColorPickerButton } from "@itwin/imodel-components-react";
 import { BuildingGroup, BuildingGroupListItem } from "./BuildingGroupComponent";
 
 export const MyFirstWidget: React.FC = () => {
